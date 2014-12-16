@@ -46,12 +46,12 @@ NSClient.makeLoginList = function(logins) {
   if (typeof logins == "number") return ":" + logins;
   return "{" + _.map(logins, function(login) {
     switch (typeof login) {
-      case "number":
-        return ":" + login;
-      case "string":
-        return login;
-      default:
-        return "";
+    case "number":
+      return ":" + login;
+    case "string":
+      return login;
+    default:
+      return "";
     }
   }) + "}";
 };
