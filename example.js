@@ -2,7 +2,7 @@
 var net = require("net")
   , util = require("util")
   , readline = require('readline')
-  , NSClient = require("./src/index.js")
+  , NSClient = require("./lib/index.js")
   , NS_HOST = "ns-server.epita.fr"
   , NS_PORT = 4242
 
