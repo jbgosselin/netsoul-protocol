@@ -23,7 +23,8 @@
   },
   "homepage": "https://github.com/gossel-j/netsoul-protocol",
   "dependencies": {
+    "lodash": "^3.6.0",
     "q": "^1.1.2",
-    "underscore": "^1.7.0"
+    "through2": "^0.6.3"
   }
 }
