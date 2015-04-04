@@ -1,3 +1,4 @@
+require("source-map-support").install()
 os = require "os"
 crypto = require "crypto"
 _ = require "lodash"
@@ -23,9 +24,8 @@ makeLoginList = (logins) ->
       "{#{tmp}}"
 
 parseLoginList = (str) ->
-  logins = if str.startsWith("{") and str.endsWith("}") then str.slice(1, -1).split(",") else [str]
-  _.map logins, (login) ->
-    if login.startsWith(":") then parseInt login.slice(1) else login
+  logins = if str.startsWith("{") && str.endsWith("}") then str.slice(1, -1).split "," else [str]
+  _.map logins, (login) -> if login.startsWith(":") then parseInt login.slice(1) else login
 
 ThroughConstructor = through.ctor (chunk, enc, cb) ->
   matches = (this._buffer + chunk.toString()).split this._opts.lineDelim
@@ -82,7 +82,7 @@ class NSClient extends ThroughConstructor
 
   sendWatch: (logins) -> this.pushLine "user_cmd watch_log_user #{makeLoginList logins}"
 
-  sendCmdUser: (cmd, data, dests) -> if cmd? and data? and dests? then this.pushLine "user_cmd msg_user #{makeLoginList dests} #{cmd} #{encodeURIComponent data}"
+  sendCmdUser: (cmd, data, dests) -> if cmd? && data? && dests? then this.pushLine "user_cmd msg_user #{makeLoginList dests} #{cmd} #{encodeURIComponent data}"
 
   sendMsg: (msg, dests) -> this.sendCmdUser "msg", msg, dests
 
@@ -162,7 +162,7 @@ class NSClient extends ThroughConstructor
       when "who" then this._onWho data, cmd
       when "state" then this._onCmdState data, cmd
       else
-        if cmd.length == 3 and cmd[2].startsWith "dst=" then this._onCmdOther data, cmd else this.emit "unknownUserCmd", data, cmd
+        if cmd.length == 3 && cmd[2].startsWith("dst=") then this._onCmdOther data, cmd else this.emit "unknownUserCmd", data, cmd
 
   # Netsoul original user_cmd handling
 

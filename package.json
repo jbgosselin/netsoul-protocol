@@ -1,6 +1,6 @@
 {
   "name": "netsoul-protocol",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Netsoul client protocol for node.js",
   "main": "lib/index.js",
   "repository": {
@@ -28,6 +28,7 @@
   "dependencies": {
     "lodash": "^3.6.0",
     "q": "^1.2.0",
+    "source-map-support": "^0.2.10",
     "through2": "^0.6.3"
   },
   "devDependencies": {
