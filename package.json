@@ -1,11 +1,14 @@
 {
   "name": "netsoul-protocol",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Netsoul client protocol for node.js",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/gossel-j/netsoul-protocol.git"
+  },
+  "scripts": {
+    "prepublish": "grunt"
   },
   "keywords": [
     "netsoul",
@@ -26,5 +29,9 @@
     "lodash": "^3.6.0",
     "q": "^1.2.0",
     "through2": "^0.6.3"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0"
   }
 }
