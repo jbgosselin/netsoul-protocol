@@ -1,7 +1,7 @@
 
-  Spécification (non officielle) du protocole Netsoul
+  Spï¿½cification (non officielle) du protocole Netsoul
   Par Patrick MARIE <mycroft@virgaria.org>
-  Dernière modification: 20031029
+  Derniï¿½re modification: 20031029
 
 /*
  * ----------------------------------------------------------------------------
@@ -13,53 +13,53 @@
  */
 
   Ce papier est munie d'une structure qui me semble la meilleure pour la
-rédaction de celle ci (lire: j'écris cela comme je le sens).
-Il décrit ce que j'ai pu apprendre en lisant les différentes sources des
-clients, et en reproduisant différentes parties du protocole.
+rï¿½daction de celle ci (lire: j'ï¿½cris cela comme je le sens).
+Il dï¿½crit ce que j'ai pu apprendre en lisant les diffï¿½rentes sources des
+clients, et en reproduisant diffï¿½rentes parties du protocole.
 
-  Pour ceux qui ne le savent pas, Epita/Epitech sont deux écoles d'informatique
+  Pour ceux qui ne le savent pas, Epita/Epitech sont deux ï¿½coles d'informatique
 en France, situe au Kremlin bicetre (sud ouest de Paris).
 (liens: http://www.epita.fr/ ; http://www.epitech.net/)
 
-  Je ne suis pour ma part aucunement affilié de près ou de loin à ces écoles,
-rédigeant cette documentation pour informer les utilisateurs.
+  Je ne suis pour ma part aucunement affiliï¿½ de prï¿½s ou de loin ï¿½ ces ï¿½coles,
+rï¿½digeant cette documentation pour informer les utilisateurs.
 
 
 I. Sommaire
 
   * I. Sommaire
-  * II. Présentation
+  * II. Prï¿½sentation
   * III. Phase d'authentification
   * IV. Commandes
   * V. Messages serveur
-  * VI. Annexes 
+  * VI. Annexes
 
 
-II. Présentation
+II. Prï¿½sentation
 
-  Les informations présentes dans ce papier feront sûrement l'objet de
-modifications indépendantes de ma volonté. Sera indépendante de ma volonté
-également la mise à jour de ce texte, car je ne serai certainement pas
-motivé pour continuer de chercher ce que les mainteneurs principaux
+  Les informations prï¿½sentes dans ce papier feront sï¿½rement l'objet de
+modifications indï¿½pendantes de ma volontï¿½. Sera indï¿½pendante de ma volontï¿½
+ï¿½galement la mise ï¿½ jour de ce texte, car je ne serai certainement pas
+motivï¿½ pour continuer de chercher ce que les mainteneurs principaux
 de Netsoul-Epita (voir ci dessous) feront comme modifications dans le
-futur. Les informations sont actuelles à la date de dernière mise à jour
+futur. Les informations sont actuelles ï¿½ la date de derniï¿½re mise ï¿½ jour
 de ce texte.
 
-  Au moment ou j'écris ces lignes, le seul serveur Netsoul-Epita
+  Au moment ou j'ï¿½cris ces lignes, le seul serveur Netsoul-Epita
 (Netsoul-Epita nommant le nom du protocole netsoul dans Epita) se situe
-sur le port TCP 4242 et à l'adresse "ns-server.epita.fr" (163.5.255.80)
+sur le port TCP 4242 et ï¿½ l'adresse "ns-server.epita.fr" (163.5.255.80)
 (et en interne dans Epita, 10.42.1.59)
 
-  Les commandes envoyées et reçues sont toujours terminées par '\n'.
-  Certaines commandes envoyées par le client peuvent recevoir des "accusés de
-réception", d'autres non. Tout cela sera notifié au bon moment.
+  Les commandes envoyï¿½es et reï¿½ues sont toujours terminï¿½es par '\n'.
+  Certaines commandes envoyï¿½es par le client peuvent recevoir des "accusï¿½s de
+rï¿½ception", d'autres non. Tout cela sera notifiï¿½ au bon moment.
 
-  Notations: Les messages reçus et envoyés étant au format texte ascii, il
-est facile de représenter dans ce texte plusieurs exemples.
-  Les lignes envoyées seront dans ce document précédées d'un 'client: ';
-  Les lignes reçues seront précédées d'un 'server: '.
-  Bien entendu, ces 'client: ' et 'server: ' ne font pas partis de la 
-communication sur le réseau.
+  Notations: Les messages reï¿½us et envoyï¿½s ï¿½tant au format texte ascii, il
+est facile de reprï¿½senter dans ce texte plusieurs exemples.
+  Les lignes envoyï¿½es seront dans ce document prï¿½cï¿½dï¿½es d'un 'client: ';
+  Les lignes reï¿½ues seront prï¿½cï¿½dï¿½es d'un 'server: '.
+  Bien entendu, ces 'client: ' et 'server: ' ne font pas partis de la
+communication sur le rï¿½seau.
 
   Par exemple:
 
@@ -67,7 +67,7 @@ communication sur le réseau.
 client: test
 -- fin capture 1 --
 
-  correspondra en C à:
+  correspondra en C ï¿½:
 
   ...
   #define TEST_MESSAGE "test\n"
@@ -76,7 +76,7 @@ client: test
   ...
 
   Pour les exemples "longs", on rajoutera des balises '-- capture X --' et
-'-- fin capture X --' pour délimiter ces exemples.
+'-- fin capture X --' pour dï¿½limiter ces exemples.
 
 III. Phase d'authentification
 
@@ -91,22 +91,22 @@ server: salut 27 2fb93c1e8020c71ccf99f6555f70e56f 195.220.50.8 45686 1036068977
 
   Le premier message d'authentification est de ce format:
 
-salut <numéro de socket> <hash md5 aléatoire> <host client> <port client> <timestamp server>
+salut <numï¿½ro de socket> <hash md5 alï¿½atoire> <host client> <port client> <timestamp server>
 
-  Le numéro de socket est invariablement un unsigned int;
-la chaîne md5 un unsigned char d'une longueur de 32 octets ('\0' final non 
+  Le numï¿½ro de socket est invariablement un unsigned int;
+la chaï¿½ne md5 un unsigned char d'une longueur de 32 octets ('\0' final non
 compris);
 l'host client est une ip lisible, donc au maximum d'une longueur de 15 octets;
 ('\0' final non compris);
 le port client est un unsigned short;
 le timestamp est un time_t.
 
-  Le hash md5 aléatoire, l'host client et le port client vont servir à 
-construire la chaîne d'authentification à envoyer par le client.
+  Le hash md5 alï¿½atoire, l'host client et le port client vont servir ï¿½
+construire la chaï¿½ne d'authentification ï¿½ envoyer par le client.
 
 
   Avant cela, le client doit demander l'autorisation de s'authentifier, et
-en donner la méthode.
+en donner la mï¿½thode.
 
 client: auth_ag ext_user none none
 server: rep 002 -- cmd end
@@ -118,24 +118,24 @@ de ce format la:
 client: ext_user_log mycroft b2177622c14612a9b0e725b9c317026f none location
 server: rep 002 -- cmd end
 
-  Les paramètres sont de ce format:
-ext_user_log <login user> <chaîne md5 de réponse> <user data> <user location>
+  Les paramï¿½tres sont de ce format:
+ext_user_log <login user> <chaï¿½ne md5 de rï¿½ponse> <user data> <user location>
 
   Le login user n'est que le login utilisateur, sur le PIE;
-  La chaîne md5 de réponse est telle que:
+  La chaï¿½ne md5 de rï¿½ponse est telle que:
 
-  MD5("<hash md5 aléatoire>-<host client>/<port client><pass socks>")
+  MD5("<hash md5 alï¿½atoire>-<host client>/<port client><pass socks>")
 
   Exemple:
 
   ...
-  /* Les arguments sont récupérées des commandes précédentes */
+  /* Les arguments sont rï¿½cupï¿½rï¿½es des commandes prï¿½cï¿½dentes */
   sprintf(buffer, "%s-%s/%i%s", hashauth, client_host, client_port, password);
 
   /* Primitive MD5 issue de la libcrypto (openssl) */
   MD5(buffer, strlen(buffer), pass);
 
-  /* MD5 renvoie des données sous format binaires, on rend la chaîne 
+  /* MD5 renvoie des donnï¿½es sous format binaires, on rend la chaï¿½ne
      'lisible' */
   str = malloc(sizeof(char) * (MD5_DIGEST_LENGTH * 2 + 1));
   memset(str, 0, (MD5_DIGEST_LENGTH * 2 + 1));
@@ -144,14 +144,14 @@ ext_user_log <login user> <chaîne md5 de réponse> <user data> <user location>
   ...
 
 
-  Le champs 'user data' et 'user location' permettent de définir deux valeurs,
-en général le client utilise et la version, et la location du client (dans
-le PIE, la salle, le rang et le numéro de station)
+  Le champs 'user data' et 'user location' permettent de dï¿½finir deux valeurs,
+en gï¿½nï¿½ral le client utilise et la version, et la location du client (dans
+le PIE, la salle, le rang et le numï¿½ro de station)
 
-  Ces deux champs doivent être dans le format des urls, c'est à dire pour 
+  Ces deux champs doivent ï¿½tre dans le format des urls, c'est ï¿½ dire pour
 faire passer "toto tutu lala" il faudra envoyer "toto%20tutu%20%lala"
 
-  Ces deux champs sont de longueur maximum de 64 caractères.
+  Ces deux champs sont de longueur maximum de 64 caractï¿½res.
 
   Exemple:
 
@@ -159,34 +159,34 @@ client: ext_user_log mycroft c5b38c5022d9e1af23cfb89630010f03 paul%2Dsud%2Easso%
 server: rep 002 -- cmd end
 
 
-  Au moment où l'ext_user_log est envoyé et confirmé, l'utilisateur est loggué
-dans le réseau netsoul et peut envoyer des commandes.
+  Au moment oï¿½ l'ext_user_log est envoyï¿½ et confirmï¿½, l'utilisateur est logguï¿½
+dans le rï¿½seau netsoul et peut envoyer des commandes.
 
-  On associera deux commandes à la phase de connexion pour un utilisateur
+  On associera deux commandes ï¿½ la phase de connexion pour un utilisateur
 externe au PIE: "attach" et le changement de status.
 
-  'attach' permet aux utilisateurs externes de libérer l'accès à d'autres
-daemons interne à epita tels que les news.
+  'attach' permet aux utilisateurs externes de libï¿½rer l'accï¿½s ï¿½ d'autres
+daemons interne ï¿½ epita tels que les news.
 
 client: attach
 server: rep 002 -- cmd end
 
-  En final, à la connexion, le status utilisateur est 'connexion'. Le client
+  En final, ï¿½ la connexion, le status utilisateur est 'connexion'. Le client
 doit changer ce status. (voir plus loin.)
 
 client: state actif:1067437282
 
-  Le serveur ne renvoie rien suite à la commande 'state'.
+  Le serveur ne renvoie rien suite ï¿½ la commande 'state'.
 
 
   2/ Second cas: utilisateur interne au PIE.
 
-  Un utilisateur du PIE, c'est à dire l'ensemble des machines dans le parc
-informatique d'epita n'a pas à subir cette phase d'authentification, comme
-elle a été établie par la connexion de l'utilisateur sur le réseau.
+  Un utilisateur du PIE, c'est ï¿½ dire l'ensemble des machines dans le parc
+informatique d'epita n'a pas ï¿½ subir cette phase d'authentification, comme
+elle a ï¿½tï¿½ ï¿½tablie par la connexion de l'utilisateur sur le rï¿½seau.
 
-  Afin de récupérer la connexion, l'utilisateur doit récupérer les variables
-d'environnement $NS_USER_LINK afin de connaitre le numéro de la socket unix,
+  Afin de rï¿½cupï¿½rer la connexion, l'utilisateur doit rï¿½cupï¿½rer les variables
+d'environnement $NS_USER_LINK afin de connaitre le numï¿½ro de la socket unix,
 qui sera:
 
   ...
@@ -206,47 +206,47 @@ IV. Commandes
 
   Ces commandes existent pour les clients internes et externes au PIE.
 
-  D'une manière générale, les commandes utilisateurs doivent être précédée
-d'un 'user_cmd' quand on est à l'extérieur du PIE, et d'un 'cmd' quand on
-est à l'intérieur du PIE.
+  D'une maniï¿½re gï¿½nï¿½rale, les commandes utilisateurs doivent ï¿½tre prï¿½cï¿½dï¿½e
+d'un 'user_cmd' quand on est ï¿½ l'extï¿½rieur du PIE, et d'un 'cmd' quand on
+est ï¿½ l'intï¿½rieur du PIE.
 
   Exemple:
 
-  Si l'on veut envoyer un message à 'rn' (voir section IV. 2/ ), on utilisera:
+  Si l'on veut envoyer un message ï¿½ 'rn' (voir section IV. 2/ ), on utilisera:
 
-  - de l'extérieur:
+  - de l'extï¿½rieur:
 
-client: user_cmd msg_user rn msg test 
+client: user_cmd msg_user rn msg test
 
-  - de l'intérieur (sur la socket unix):
+  - de l'intï¿½rieur (sur la socket unix):
 
 client: cmd msg_user rn msg test
 
 
   1/ state
 
-  Les clients (utilisateur) netsoul se voient attribués d'un status de la
+  Les clients (utilisateur) netsoul se voient attribuï¿½s d'un status de la
 connexion.
 
-  Bien que n'importe quel status semble être accepté par le serveur, il est
-préférable d'en utiliser qu'un de ceux ci:
+  Bien que n'importe quel status semble ï¿½tre acceptï¿½ par le serveur, il est
+prï¿½fï¿½rable d'en utiliser qu'un de ceux ci:
 
   * actif
-  -> Vous êtes sur votre station de travail, près à être joint si nécessaire;
+  -> Vous ï¿½tes sur votre station de travail, prï¿½s ï¿½ ï¿½tre joint si nï¿½cessaire;
   * away
-  -> Vous n'êtes pas sur votre station de travail;
+  -> Vous n'ï¿½tes pas sur votre station de travail;
   * connection
-  -> Vous n'avez pas changé le status par défaut suivant la connexion;
+  -> Vous n'avez pas changï¿½ le status par dï¿½faut suivant la connexion;
   * idle
-  -> Vous êtes sur votre station, mais n'avez pas montré signe de vie;
+  -> Vous ï¿½tes sur votre station, mais n'avez pas montrï¿½ signe de vie;
   * lock
-  -> Vous avez locké votre station;
+  -> Vous avez lockï¿½ votre station;
   * server
   -> Le client est sur un serveur d'applications;
-  * none 
-  -> Vous ne désirez pas utiliser le status.
+  * none
+  -> Vous ne dï¿½sirez pas utiliser le status.
 
-  Avec cela, il faut envoyer le timestamp de changement d'état, sous ce format:
+  Avec cela, il faut envoyer le timestamp de changement d'ï¿½tat, sous ce format:
 
 state <new status>:<timestamp>
 
@@ -256,18 +256,18 @@ client: state actif:1036142854
 
 state away:1036142860
 
-  D'une manière générale, les commandes utilisateur
+  D'une maniï¿½re gï¿½nï¿½rale, les commandes utilisateur
 
-  A l'externe du PIE, cette commande peut aussi etre envoyée de cette forme:
+  A l'externe du PIE, cette commande peut aussi etre envoyï¿½e de cette forme:
 
-client: user_cmd state <new status> 
+client: user_cmd state <new status>
 
   Exemples d'utilisation:
 
 client: user_cmd state none
 client: user_cmd state actif
 
-  Voir également la section "Messages serveur".
+  Voir ï¿½galement la section "Messages serveur".
 
 
   2/ msg
@@ -275,13 +275,13 @@ client: user_cmd state actif
   Comme jabber ou yahoo, il est possible de faire de "l'instant messaging"
 avec Netsoul.
 
-  On peut envoyer des messages à toutes les personnes loggués à netsoul. 
-L'envoie de message à des personnes non loggués est autorisée, mais les
-messages ne sont pas conservés par le serveur (donc perdus).
+  On peut envoyer des messages ï¿½ toutes les personnes logguï¿½s ï¿½ netsoul.
+L'envoie de message ï¿½ des personnes non logguï¿½s est autorisï¿½e, mais les
+messages ne sont pas conservï¿½s par le serveur (donc perdus).
 
-  Exemple, pour un utilisateur externe puis interne: 
+  Exemple, pour un utilisateur externe puis interne:
 
-client: user_cmd msg_user rn msg bonjours 
+client: user_cmd msg_user rn msg bonjours
 client: cmd msg_user rn msg bonjours
 
   Format:
@@ -289,29 +289,29 @@ client: cmd msg_user rn msg bonjours
 
   login / liste login contient soit un login (Exemple: 'rn');
     soit une liste de login (Exemple: '{rn,jumpy,:42}'), ou, entre accolades
-et sépares par des ',', on peut mettre soit des login soit des numéros de
+et sï¿½pares par des ',', on peut mettre soit des login soit des numï¿½ros de
 sockets (prefixees alors de ':').
-    Cette notion de liste de login est également utilisée pour d'autre
+    Cette notion de liste de login est ï¿½galement utilisï¿½e pour d'autre
 commandes.
 
-  message: le message doit être du même format que "user data" et "location",
+  message: le message doit ï¿½tre du mï¿½me format que "user data" et "location",
 en 'url encoded'.
 
   Exemple:
 
 client: user_cmd msg_user {mycroft,:1049} msg Salut%2C%20ca%20vas%20%3F
 
-  Voir également la section "Messages serveur".
+  Voir ï¿½galement la section "Messages serveur".
 
 
   3/ list_users
 
-  list_users permet de récupérer la liste des clients loggues sur netsoul.
+  list_users permet de rï¿½cupï¿½rer la liste des clients loggues sur netsoul.
 Il peut viser un login en particulier ou plusieurs via une liste de login
-(décrit dans la section IV. 2/)
+(dï¿½crit dans la section IV. 2/)
 
   Format:
-list_users <login / liste login> 
+list_users <login / liste login>
 
   Exemple:
 
@@ -329,12 +329,12 @@ server: rep 002 -- cmd end
 -- capture 3 --
 client: list_users {:1419,benoit_e}
 server: 184 benoit_e 10.252.42.53 1067515906 1067516521 3 1 ~ kernel ept_2002 serveur:1067515855 bnsd-0.1
-server: 1419 rn 163.5.42.42 1067515354 1067516718 1 3 NetBsd_wse bocal_r1p1 wheel actif:1067516719 - 
+server: 1419 rn 163.5.42.42 1067515354 1067516718 1 3 NetBsd_wse bocal_r1p1 wheel actif:1067516719 -
 server: rep 002 -- cmd end
 -- fin capture 3 --
 
   Voir la section IV. 2/ pour la description de 'login / liste login'.
-  Voir également la section "Messages serveur".
+  Voir ï¿½galement la section "Messages serveur".
 
 
   4/ watch_log_user
@@ -351,14 +351,14 @@ changements de status... (comme icq, aim, ...)
 
 client: user_cmd watch_log_user {rn,benoit_e}
 
-  Voir la section IV. 2/ pour la description de 'login / liste login'. 
-  Voir également la section "Messages serveur".
+  Voir la section IV. 2/ pour la description de 'login / liste login'.
+  Voir ï¿½galement la section "Messages serveur".
 
 
   5/ who
 
   who permet d'avoir des informations sur un/des utilisateur(s) loggues
-(moyen de substitution à list_users).
+(moyen de substitution ï¿½ list_users).
 
   Format:
 
@@ -368,19 +368,19 @@ client: user_cmd watch_log_user {rn,benoit_e}
 
 -- capture --
 client: raw user_cmd who {rn,mycroft}
-server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who 525 mycroft 195.220.50.8 106751826 5 1067518791 3 1 ~ paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20 ext actif:1067518387 nsc%20roulez
+server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who 525 mycroft 195.220.50.8 1067518265 1067518791 3 1 ~ paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20 ext actif:1067518387 nsc%20roulez
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who 1419 rn 163.5.42.42 1067515354 1067518532 1 3 NetBsd_wse bocal_r1p1 wheel actif:1067518039 -
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who 118 mycroft 212.129.36.164 1067500202 1067518681 3 1 ~ appart%40madrid ext actif:1067500221 bns%2D0%2E9%2E2%20%5B%20bNetSoul%20rocks%20%5D
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who rep 002 -- cmd end
 -- fin capture --
 
   Voir la section IV. 2/ pour la description de 'login / liste login'.
-  Voir également la section "Messages serveur".
+  Voir ï¿½galement la section "Messages serveur".
 
 
   6/ exit
 
-  Un client peut envoyer à tout moment la commande 'exit' afin de se delogguer
+  Un client peut envoyer ï¿½ tout moment la commande 'exit' afin de se delogguer
 du serveur.
 
 
@@ -405,7 +405,7 @@ server: user_cmd 91:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtl
 
 user_cmd <socket>:user:<trust level>:<login>@<user host>:<workstation type>:<location>:<groupe> | <command> <command extension>
 
-  socket: unsigned int, représentant le numéro de la socket du client qui
+  socket: unsigned int, reprï¿½sentant le numï¿½ro de la socket du client qui
           vient d'envoyer le message;
   trust level: 1/3 hors du PIE (en externe, donc), 3/1 en interne;
   login: login de l'utilisateur du client qui envoie le message;
@@ -417,18 +417,18 @@ user_cmd <socket>:user:<trust level>:<login>@<user host>:<workstation type>:<loc
                 state (l'utilisateur vient de changer de status).
 
 
-  2/ Réception d'un message
+  2/ Rï¿½ception d'un message
 
-  La réception d'un message est similaire au changement d'un status (V. 1/);
-Est juste différent la commande, qui sera 'msg':
+  La rï¿½ception d'un message est similaire au changement d'un status (V. 1/);
+Est juste diffï¿½rent la commande, qui sera 'msg':
 
   Exemple:
 
 client: user_cmd msg_user {mycroft} msg test
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | msg test
 
-  Le message est url-encoded, et ne peut contenir plus de 256 caractères
-(après encodage.)
+  Le message est url-encoded, et ne peut contenir plus de 256 caractï¿½res
+(aprï¿½s encodage.)
 
   De plus, on pourra recevoir les notifications pour les mails:
 
@@ -438,17 +438,17 @@ server: user_cmd 0:mail:9/9:_deamon:: | new_mail -f mycroft@virgaria.org %28test
 source du message et finalement du titre du mail en url-encoded.
 
 
-  3/ Réception d'une réponse à la commande list_users
+  3/ Rï¿½ception d'une rï¿½ponse ï¿½ la commande list_users
 
 client: list_users franco_l
 server: 1043 franco_l 213.142.23.186 1067500237 1067520661 3 1 ~ rhs%2Ese epita_2003 actif:1067500198 42
 server: rep 002 -- cmd end
 
-  Le format du message reçu est de la forme:
+  Le format du message reï¿½u est de la forme:
 
 <socket> <login> <user host> <login timestamp> <last status change timestamp> <trust level low> <trust level high> <workstation type> <location> <group> <status> <user data>
 
-  socket: unsigned int, représentant le numéro de la socket du client qui
+  socket: unsigned int, reprï¿½sentant le numï¿½ro de la socket du client qui
           vient d'envoyer le message;
   user host: adresse ip du client;
   login timestamp: heure de connexion du client sur netsoul
@@ -460,11 +460,11 @@ server: rep 002 -- cmd end
   group: groupe de l'utilisateur;
   status: status de l'utilisateur;
   user date: champs userdata de l'utilisateur (en url encoded).
-  
 
-  4/ Réception d'une réponse à la commande who
 
-  Suite à la commande who, le client reçoit au moins une ligne comprenant,
+  4/ Rï¿½ception d'une rï¿½ponse ï¿½ la commande who
+
+  Suite ï¿½ la commande who, le client reï¿½oit au moins une ligne comprenant,
 sous la forme d'un message de changement de status (V. 1/), mais ayant comme
 commande 'who' le message 'rep 002 -- cmd end'.
 
@@ -472,22 +472,22 @@ client: user_cmd who {rn}
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who 1419 rn 163.5.42.42 1067515354 1067522535 1 3 NetBsd_wse bocal_r1p1 wheel idle:1067522086 -
 server: user_cmd 525:user:1/3:mycroft@195.220.50.8:~:paul%2Dsud%2Easso%2Eups%2Dtlse%2Efr%20:ext | who rep 002 -- cmd end
 
-  Le format de la partie avant le '|' est décrit dans la section V. I/
-  Le format de la partie après le '|' est le suivant:
+  Le format de la partie avant le '|' est dï¿½crit dans la section V. I/
+  Le format de la partie aprï¿½s le '|' est le suivant:
 
 | who <socket> <login> <user host> <login timestamp> <last change timestamp> <trust level low> <trust level high> <workstation type> <location> <group> <status> <user data>
 
-  Le message reçu après le 'who' étant du même format que celui renvoyé par la
-commande 'list_users', le format n'en sera pas re décrit ici. cf section V. 3/
+  Le message reï¿½u aprï¿½s le 'who' ï¿½tant du mï¿½me format que celui renvoyï¿½ par la
+commande 'list_users', le format n'en sera pas re dï¿½crit ici. cf section V. 3/
 
 
-  5/ Réception d'un 'ping'
+  5/ Rï¿½ception d'un 'ping'
 
-  Le serveur netsoul envoit régulierement des 'ping' afin de voir si le
-client est encore connecté. Il associe cela à un nombre qui correspond au
-nombre de seconde que le serveur attend après un message du client avant de
-le déconnecter.
-  Le client peut répondre, par exemple, la même ligne envoyée.
+  Le serveur netsoul envoit rï¿½gulierement des 'ping' afin de voir si le
+client est encore connectï¿½. Il associe cela ï¿½ un nombre qui correspond au
+nombre de seconde que le serveur attend aprï¿½s un message du client avant de
+le dï¿½connecter.
+  Le client peut rï¿½pondre, par exemple, la mï¿½me ligne envoyï¿½e.
 
   Exemple:
 
@@ -499,18 +499,17 @@ VI. Annexes
 
   1/ A faire
 
-  * tenter une connexion ext à l'intérieur du PIE; il me semble que le
-'protocole' d'auth etait une fois de plus différent. (cf méthode csecret)
-  * voir les différentes gestions des "cmd", "user_cmd", ... à l'intérieur
+  * tenter une connexion ext ï¿½ l'intï¿½rieur du PIE; il me semble que le
+'protocole' d'auth etait une fois de plus diffï¿½rent. (cf mï¿½thode csecret)
+  * voir les diffï¿½rentes gestions des "cmd", "user_cmd", ... ï¿½ l'intï¿½rieur
 du PIE.
   * extensions des clients:
 06:33 !!! Not yet handled: [user_cmd 95:user:1/3:asega_a@10.253.4.11:~:%5co_:ept3 | dotnetSoul_UserCancelledTyping null ]
 06:33 !!! Not yet handled: [user_cmd 95:user:1/3:asega_a@10.253.4.11:~:%5co_:ept3 | dotnetSoul_UserTyping null ]
 06:33 !!! Not yet handled: [user_cmd 95:user:1/3:asega_a@10.253.4.11:~:%5co_:ept3 | dotnetSoul_UserCancelledTyping null ]
 
-  * récupérer les clients en commande, et voir les fonctions.
+  * rï¿½cupï¿½rer les clients en commande, et voir les fonctions.
 
   2/ Exemple de connexion 'complet'
 
   3/ Change Log
-
