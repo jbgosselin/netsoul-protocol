@@ -43,6 +43,7 @@ ThroughConstructor = through.ctor (chunk, enc, cb) ->
 
 class NSClient extends ThroughConstructor
   constructor: (opts) ->
+    if this not instanceof NSClient then return new NSClient opts
     super()
 
     opts = _.pick opts, _.keys(DEFAULT_OPTS)
