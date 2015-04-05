@@ -24,7 +24,7 @@ makeLoginList = (logins) ->
 
 parseLoginList = (str) ->
   logins = if str.startsWith("{") && str.endsWith("}") then str.slice(1, -1).split "," else [str]
-  _.map logins, (login) -> if login.startsWith(":") then parseInt login.slice(1) else login
+  _.map logins, (login) -> if login.startsWith(":") then parseInt login.slice 1 else login
 
 ThroughConstructor = through.ctor (chunk, enc, cb) ->
   matches = (this._buffer + chunk.toString()).split this._opts.lineDelim
@@ -39,7 +39,7 @@ ThroughConstructor = through.ctor (chunk, enc, cb) ->
         when "salut" then this._onSalut words
         when "user_cmd" then this._onUserCmd words
         else this.emit "unknownLine", words
-  return cb()
+  cb()
 
 class NSClient extends ThroughConstructor
   constructor: (opts) ->
@@ -63,7 +63,7 @@ class NSClient extends ThroughConstructor
 
     if @_opts.autoPing then this.on "ping", this.sendPing
 
-  _createRepPromise: () ->
+  _createRepPromise: ->
     D = Q.defer()
     @_repQueue.push D
     D.promise
@@ -74,7 +74,7 @@ class NSClient extends ThroughConstructor
     this.emit "pushLine", line
     this.push line + "\n"
 
-  sendExit: () -> this.pushLine "exit"
+  sendExit: -> this.pushLine "exit"
 
   sendPing: (time) -> this.pushLine "ping #{time}"
 
@@ -94,7 +94,7 @@ class NSClient extends ThroughConstructor
 
   sendFileStart: (name, ip, port, dests) -> this.sendCmdUser "file_start", "#{encodeURIComponent name} #{ip} #{port}", dests
 
-  sendAuthAg: () ->
+  sendAuthAg: ->
     this.pushLine "auth_ag ext_user none none"
     this._createRepPromise()
 
@@ -106,7 +106,9 @@ class NSClient extends ThroughConstructor
     logins = [logins] if typeof logins is "string"
     this.pushLine "user_cmd who #{makeLoginList logins}"
     D = Q.defer()
-    @_whoQueue.push {defer: D, logins: logins}
+    @_whoQueue.push
+      defer: D
+      logins: logins
     D.promise
 
   doAuthentication: (login, passwd) ->
