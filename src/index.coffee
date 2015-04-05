@@ -103,7 +103,7 @@ class NSClient extends ThroughConstructor
     this._createRepPromise()
 
   sendWho: (logins) ->
-    logins = if typeof logins is "string" then [logins] else logins
+    logins = [logins] if typeof logins is "string"
     this.pushLine "user_cmd who #{makeLoginList logins}"
     D = Q.defer()
     @_whoQueue.push {defer: D, logins: logins}
