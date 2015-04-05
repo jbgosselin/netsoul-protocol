@@ -1,4 +1,3 @@
-require("source-map-support").install()
 os = require "os"
 crypto = require "crypto"
 _ = require "lodash"
