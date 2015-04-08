@@ -28,11 +28,11 @@ function connect(login, passwd) {
     sock.pipe(client).pipe(sock)
 
     client.on("line", function(line) {
-      console.log(`<${line}`)
+      console.log("<" + line)
     })
 
     client.on("pushLine", function(line) {
-      console.log(`>${line}`)
+      console.log(">" + line)
     })
 
     client.on("salut", function(data) {
@@ -40,7 +40,7 @@ function connect(login, passwd) {
         console.log("[Info] Authentication OK.")
         client.sendState("actif")
       }).catch(function(err) {
-        console.error(`[Error] ${err}`)
+        console.error("[Error]" + err)
         client.sendExit()
       })
     })
@@ -50,7 +50,7 @@ function connect(login, passwd) {
     })
 
     client.on("userCmdMsg", function(sender, msg, dests) {
-      console.log(`[${sender.login}@${sender.location}] ${msg}`)
+      console.log(["[", sender.login, "@", sender.location, "] ", msg].join())
     })
   })
 
