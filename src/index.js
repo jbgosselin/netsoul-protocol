@@ -23,7 +23,7 @@ function makeLoginList(logins) {
           case "string": return login
           default: return ""
         }
-      }), "}"].join()
+      }), "}"].join("")
   }
 }
 
@@ -112,7 +112,7 @@ NSClient.prototype.sendPing = function(time) {
 
 NSClient.prototype.sendState = function(state, time) {
   time = time || Date.now() / 1000
-  this.pushLine(["state ", state, ":", parseInt(time)].join())
+  this.pushLine(["state ", state, ":", parseInt(time)].join(""))
 }
 
 NSClient.prototype.sendWatch = function(logins) {
@@ -186,7 +186,7 @@ NSClient.prototype.doAuthentication = function(login, passwd) {
   if (this._salutData === undefined) return P.reject("salut never happened")
   var data = this._salutData,
       salutHash = crypto.createHash("md5")
-  salutHash.update([data.hash, "-", data.ip, "/", data.port, passwd].join())
+  salutHash.update([data.hash, "-", data.ip, "/", data.port, passwd].join(""))
   salutHash = salutHash.digest("hex")
   return this.sendAuthAg().bind(this).then(function(res) {
     if (res.code == 2) return this.sendExtUserLog(login, salutHash)
