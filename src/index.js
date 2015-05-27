@@ -1,9 +1,10 @@
+"use strict"
 var os = require("os"),
-    crypto = require("crypto"),
-    _ = require("lodash"),
-    P = require("bluebird"),
-    through = require("through2"),
-    util = require("util")
+  crypto = require("crypto"),
+  _ = require("lodash"),
+  P = require("bluebird"),
+  Duplex = require("readable-stream/duplex"),
+  util = require("util")
 
 var DEFAULT_OPTS = {
   location: os.hostname() || "netsoul-protocol",
@@ -40,25 +41,6 @@ function parseLoginList(str) {
   })
 }
 
-var ThroughConstructor = through.ctor(function(chunk, enc, cb) {
-  var matches = (this._buffer + chunk.toString()).split(this._opts.lineDelim)
-  this._buffer = matches.pop()
-  _.forEach(matches, function(line) {
-    this.emit("line", line)
-    words = line.split(" ")
-    if (words.length > 0) {
-      switch (words[0]) {
-        case "rep": return this._onRep(words)
-        case "ping": return this._onPing(words)
-        case "salut": return this._onSalut(words)
-        case "user_cmd": return this._onUserCmd(words)
-        default: return this.emit("unknownLine", words)
-      }
-    }
-  }, this)
-  cb()
-})
-
 function NSClient(opts) {
   if (!(this instanceof NSClient)) return new NSClient(opts)
   NSClient.super_.call(this)
@@ -77,12 +59,13 @@ function NSClient(opts) {
   }
 }
 
-util.inherits(NSClient, ThroughConstructor)
+util.inherits(NSClient, Duplex)
 
 NSClient.NS_HOST = "ns-server.epita.fr"
 NSClient.NS_PORT = 4242
 
 NSClient.prototype._buffer = ""
+NSClient.prototype._outBuffer = ""
 NSClient.prototype._repQueue = []
 NSClient.prototype._whoQueue = []
 NSClient.prototype._whoBuffer = []
@@ -93,6 +76,27 @@ NSClient.prototype._createRepPromise = function() {
   var D = P.defer()
   this._repQueue.push(D)
   return D.promise
+}
+
+NSClient.prototype._read = function(size) {}
+
+NSClient.prototype._write = function(chunk, enc, next) {
+  var matches = (this._buffer + chunk.toString()).split(this._opts.lineDelim)
+  this._buffer = matches.pop()
+  _.forEach(matches, function(line) {
+    this.emit("line", line)
+    var words = line.split(" ")
+    if (words.length > 0) {
+      switch (words[0]) {
+        case "rep": return this._onRep(words)
+        case "ping": return this._onPing(words)
+        case "salut": return this._onSalut(words)
+        case "user_cmd": return this._onUserCmd(words)
+        default: return this.emit("unknownLine", words)
+      }
+    }
+  }, this)
+  next()
 }
 
 // Methods
@@ -163,8 +167,8 @@ NSClient.prototype.sendAuthAg = function() {
 }
 
 NSClient.prototype.sendExtUserLog = function(login, hash) {
-  var enc = encodeURIComponent
-      o = this._opts
+  var enc = encodeURIComponent,
+    o = this._opts
   this.pushLine(
     ["ext_user_log", login, hash, enc(o.location), enc(o.resource)].join(" ")
   )
@@ -174,7 +178,7 @@ NSClient.prototype.sendExtUserLog = function(login, hash) {
 NSClient.prototype.sendWho = function(logins) {
   logins = (typeof(logins) == "string") ? [logins] : logins
   this.pushLine("user_cmd who " + makeLoginList(logins))
-  D = P.defer()
+  var D = P.defer()
   this._whoQueue.push({
     defer: D,
     logins: logins
@@ -185,7 +189,7 @@ NSClient.prototype.sendWho = function(logins) {
 NSClient.prototype.doAuthentication = function(login, passwd) {
   if (this._salutData === undefined) return P.reject("salut never happened")
   var data = this._salutData,
-      salutHash = crypto.createHash("md5")
+    salutHash = crypto.createHash("md5")
   salutHash.update([data.hash, "-", data.ip, "/", data.port, passwd].join(""))
   salutHash = salutHash.digest("hex")
   return this.sendAuthAg().bind(this).then(function(res) {
@@ -226,19 +230,19 @@ NSClient.prototype._onSalut = function(words) {
 
 NSClient.prototype._onUserCmd = function(words) {
   var tmp = words[1].split(":"),
-      trust_levels = tmp[2].split("/"),
-      user_data = tmp[3].split("@"),
-      cmd = words.slice(3),
-      data = {
-        socket: parseInt(tmp[0]),
-        trust_level_low: parseInt(trust_levels[0]),
-        trust_level_high: parseInt(trust_levels[1]),
-        login: user_data[0],
-        ip: user_data[1],
-        workstation_type: tmp[4],
-        location: decodeURIComponent(tmp[5]),
-        group: tmp[6]
-      }
+    trust_levels = tmp[2].split("/"),
+    user_data = tmp[3].split("@"),
+    cmd = words.slice(3),
+    data = {
+      socket: parseInt(tmp[0]),
+      trust_level_low: parseInt(trust_levels[0]),
+      trust_level_high: parseInt(trust_levels[1]),
+      login: user_data[0],
+      ip: user_data[1],
+      workstation_type: tmp[4],
+      location: decodeURIComponent(tmp[5]),
+      group: tmp[6]
+    }
   this.emit("userCmd", data, cmd)
   switch (cmd[0]) {
     case "login": return this._onCmdLogin(data)
@@ -259,7 +263,7 @@ NSClient.prototype._onUserCmd = function(words) {
 NSClient.prototype._onCmdWho = function(sender, data) {
   if (data[1] == "rep") {
     var who = this._whoQueue.shift(),
-        whoBuffer = this._whoBuffer
+      whoBuffer = this._whoBuffer
     this._whoBuffer = []
     if (who === undefined) {
       return this.emit("unexpectedUserCmdWhoEnd", whoBuffer)
@@ -289,7 +293,7 @@ NSClient.prototype._onCmdWho = function(sender, data) {
           },
           resource: decodeURIComponent(data[12])
         }
-    this.emit("userCmdWho", send, whoData)
+    this.emit("userCmdWho", sender, whoData)
     this._whoBuffer.push(whoData)
   }
 }

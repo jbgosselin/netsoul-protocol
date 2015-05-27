@@ -1,6 +1,6 @@
 {
   "name": "netsoul-protocol",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "description": "Netsoul client protocol for node.js",
   "main": "src/index.js",
   "repository": {
@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/gossel-j/netsoul-protocol",
   "dependencies": {
-    "bluebird": "^2.9.24",
-    "lodash": "^3.6.0",
-    "through2": "^0.6.3"
+    "bluebird": "^2.9.26",
+    "lodash": "^3.9.3",
+    "readable-stream": "^1.0.33"
   }
 }
