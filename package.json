@@ -1,8 +1,11 @@
 {
   "name": "netsoul-protocol",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Netsoul client protocol for node.js",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=1.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gossel-j/netsoul-protocol.git"
@@ -23,8 +26,8 @@
   },
   "homepage": "https://github.com/gossel-j/netsoul-protocol",
   "dependencies": {
-    "bluebird": "^2.9.26",
-    "lodash": "^3.9.3",
-    "readable-stream": "^1.0.33"
+    "bluebird": "^2.10.0",
+    "lodash": "^3.10.1",
+    "readable-stream": "^2.0.2"
   }
 }
