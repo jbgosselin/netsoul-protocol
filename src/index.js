@@ -16,15 +16,10 @@ var DEFAULT_OPTS = {
 function makeLoginList(logins) {
   switch (typeof logins) {
     case "string": return logins
-    case "number": return ":" + logins
+    case "number": return `:${logins}`
     default:
-      return ["{", _.map(logins, function(login) {
-        switch(typeof login) {
-          case "number": return ":" + login
-          case "string": return login
-          default: return ""
-        }
-      }), "}"].join("")
+      if (_.isArray(logins)) return `{${_.map(logins, makeLoginList).join(",")}}`
+      return ""
   }
 }
 
@@ -103,7 +98,7 @@ NSClient.prototype._write = function(chunk, enc, next) {
 
 NSClient.prototype.pushLine = function(line) {
   this.emit("pushLine", line)
-  this.push(line + "\n")
+  this.push(`${line}\n`)
 }
 
 NSClient.prototype.sendExit = function() {
@@ -111,25 +106,20 @@ NSClient.prototype.sendExit = function() {
 }
 
 NSClient.prototype.sendPing = function(time) {
-  this.pushLine("ping " + time)
+  this.pushLine(`ping ${time}`)
 }
 
 NSClient.prototype.sendState = function(state, time) {
   time = time || Date.now() / 1000
-  this.pushLine(["state ", state, ":", parseInt(time)].join(""))
+  this.pushLine(`state ${state}:${parseInt(time)}`)
 }
 
 NSClient.prototype.sendWatch = function(logins) {
-  this.pushLine("user_cmd watch_log_user " + makeLoginList(logins))
+  this.pushLine(`user_cmd watch_log_user ${makeLoginList(logins)}`)
 }
 
 NSClient.prototype.sendCmdUser = function(cmd, dt, ds) {
-  this.pushLine([
-    "user_cmd msg_user",
-    makeLoginList(ds),
-    cmd,
-    encodeURIComponent(dt)
-  ].join(" "))
+  this.pushLine(`user_cmd msg_user ${makeLoginList(ds)} ${cmd} ${encodeURIComponent(dt)}`)
 }
 
 NSClient.prototype.sendMsg = function(msg, dests) {
@@ -145,20 +135,12 @@ NSClient.prototype.sendCancelledTyping = function(dests) {
 }
 
 NSClient.prototype.sendFileAsk = function(name, size, desc, dests) {
-  this.sendCmdUser("file_ask", [
-    encodeURIComponent(name),
-    size,
-    encodeURIComponent(desc),
-    "passive"
-  ].join(" "), dests)
+  var enc = encodeURIComponent
+  this.sendCmdUser("file_ask", `${enc(name)} ${size} ${enc(desc)} ${passive}`, dests)
 }
 
 NSClient.prototype.sendFileStart = function(name, ip, port, dests) {
-  this.sendCmdUser(
-    "file_start",
-    [encodeURIComponent(name), ip, port].join(" "),
-    dests
-  )
+  this.sendCmdUser("file_start", `${encodeURIComponent(name)} ${ip} ${port}`, dests)
 }
 
 NSClient.prototype.sendAuthAg = function() {
@@ -169,15 +151,13 @@ NSClient.prototype.sendAuthAg = function() {
 NSClient.prototype.sendExtUserLog = function(login, hash) {
   var enc = encodeURIComponent,
     o = this._opts
-  this.pushLine(
-    ["ext_user_log", login, hash, enc(o.location), enc(o.resource)].join(" ")
-  )
+  this.pushLine(`ext_user_log ${login} ${hash} ${enc(o.location)} ${enc(o.resource)}`)
   return this._createRepPromise()
 }
 
 NSClient.prototype.sendWho = function(logins) {
   logins = (typeof(logins) == "string") ? [logins] : logins
-  this.pushLine("user_cmd who " + makeLoginList(logins))
+  this.pushLine(`user_cmd who ${makeLoginList(logins)}`)
   var D = P.defer()
   this._whoQueue.push({
     defer: D,
@@ -190,7 +170,7 @@ NSClient.prototype.doAuthentication = function(login, passwd) {
   if (this._salutData === undefined) return P.reject("salut never happened")
   var data = this._salutData,
     salutHash = crypto.createHash("md5")
-  salutHash.update([data.hash, "-", data.ip, "/", data.port, passwd].join(""))
+  salutHash.update(`${data.hash}-${data.ip}/${data.port}${passwd}`)
   salutHash = salutHash.digest("hex")
   return this.sendAuthAg().bind(this).then(function(res) {
     if (res.code == 2) return this.sendExtUserLog(login, salutHash)
