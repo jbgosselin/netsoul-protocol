@@ -10,8 +10,8 @@ function main() {
     output: process.stdout
   })
 
-  rl.question("login: ", function(login) {
-    rl.question("password: ", function(passwd) {
+  rl.question("login: ", (login) => {
+    rl.question("password: ", (passwd) => {
       connect(login, passwd)
       rl.close()
     })
@@ -24,38 +24,38 @@ function connect(login, passwd) {
     NSClient.NS_HOST
   )
 
-  sock.on("connect", function() {
+  sock.on("connect", () => {
     var client = new NSClient()
     sock.pipe(client).pipe(sock)
 
-    client.on("line", function(line) {
+    client.on("line", (line) => {
       console.log("<" + line)
     })
 
-    client.on("pushLine", function(line) {
+    client.on("pushLine", (line) => {
       console.log(">" + line)
     })
 
-    client.on("salut", function(data) {
-      client.doAuthentication(login, passwd).then(function() {
+    client.on("salut", (data) => {
+      client.doAuthentication(login, passwd).then(() => {
         console.log("[Info] Authentication OK.")
         client.sendState("actif")
-      }).catch(function(err) {
+      }).catch((err) => {
         console.error("[Error]" + err)
         client.sendExit()
       })
     })
 
-    client.once("exit", function() {
+    client.once("exit", () => {
       console.log("[Info] Connection closed.")
     })
 
-    client.on("userCmdMsg", function(sender, msg, dests) {
+    client.on("userCmdMsg", (sender, msg, dests) => {
       console.log(["[", sender.login, "@", sender.location, "] ", msg].join())
     })
   })
 
-  sock.once("error", function(err) {
+  sock.once("error", (err) => {
     console.error("CATCH ERROR")
     console.error(err)
   })
