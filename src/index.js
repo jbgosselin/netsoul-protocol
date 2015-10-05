@@ -2,7 +2,6 @@
 var os = require("os"),
   crypto = require("crypto"),
   _ = require("lodash"),
-  P = require("bluebird"),
   Duplex = require("readable-stream/duplex")
 
 var DEFAULT_OPTS = {
@@ -10,6 +9,17 @@ var DEFAULT_OPTS = {
   resource: "netsoul-protocol",
   autoPing: true,
   lineDelim: /\r?\n/
+}
+
+class Defer {
+  constructor() {
+    this.resolve = null
+    this.reject = null
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve
+      this.reject = reject
+    })
+  }
 }
 
 function makeLoginList(logins) {
@@ -61,7 +71,7 @@ class NSClient extends Duplex {
   }
 
   _createRepPromise() {
-    var D = P.defer()
+    var D = new Defer()
     this._repQueue.push(D)
     return D.promise
   }
@@ -151,7 +161,7 @@ class NSClient extends Duplex {
   sendWho(logins) {
     logins = (typeof(logins) == "string") ? [logins] : logins
     this.pushLine(`user_cmd who ${makeLoginList(logins)}`)
-    var D = P.defer()
+    var D = new Defer()
     this._whoQueue.push({
       defer: D,
       logins: logins
@@ -160,16 +170,16 @@ class NSClient extends Duplex {
   }
 
   doAuthentication(login, passwd) {
-    if (this._salutData === undefined) return P.reject("salut never happened")
+    if (this._salutData === undefined) return Promise.reject("salut never happened")
     var data = this._salutData,
       salutHash = crypto.createHash("md5")
     salutHash.update(`${data.hash}-${data.ip}/${data.port}${passwd}`)
     salutHash = salutHash.digest("hex")
     return this.sendAuthAg().then((res) => {
       if (res.code == 2) return this.sendExtUserLog(login, salutHash)
-      return P.reject("Can't ask authentication.")
+      return Promise.reject("Can't ask authentication.")
     }).then((res) => {
-      if (res.code != 2) return P.reject("Authentication failed.")
+      if (res.code != 2) return Promise.reject("Authentication failed.")
     })
   }
 
