@@ -2,7 +2,7 @@
 "use strict"
 var net = require("net"),
     readline = require("readline"),
-    NSClient = require("./src")
+    NSClient = require("./lib")
 
 function main() {
   var rl = readline.createInterface({
