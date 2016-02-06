@@ -1,6 +1,6 @@
 {
   "name": "netsoul-protocol",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Netsoul client protocol for node.js",
   "main": "lib/index.js",
   "repository": {
