@@ -7,6 +7,9 @@
     "type": "git",
     "url": "https://github.com/gossel-j/netsoul-protocol.git"
   },
+  "scripts": {
+    "prepublish": "gulp prepublish"
+  },
   "keywords": [
     "netsoul",
     "pipe",
