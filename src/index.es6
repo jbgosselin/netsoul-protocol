@@ -28,7 +28,7 @@ const makeLoginList = (logins) => {
   switch (typeof logins) {
     case "string": return logins;
     case "number": return `:${logins}`;
-    default: return (_.isArray(logins)) ? `{${_.map(logins, makeLoginList).join(",")}}` : "";
+    default: return (_.isArray(logins)) ? `{${ _.map(logins, makeLoginList).join(",") }}` : "";
   }
 };
 
